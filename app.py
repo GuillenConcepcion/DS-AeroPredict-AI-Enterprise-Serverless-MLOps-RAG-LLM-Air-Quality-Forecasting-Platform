@@ -27,6 +27,8 @@ st.markdown(
     <style>
     .main { background-color: #0b0f19; }
     .stMetric { background-color: rgba(22, 30, 49, 0.7); padding: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
+    /* Prevent Chrome/Edge Google Translate extension from breaking React DOM node removal */
+    .element-container, .stPlotlyChart { translate: no; }
     </style>
     """,
     unsafe_allow_html=True,
@@ -124,7 +126,7 @@ if not forecast_df.empty:
         margin=dict(l=20, r=20, t=30, b=20),
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, key="forecast_plotly_chart")
 
     # Hourly Data Table
     with st.expander("🔍 View Raw Forecast Data"):
