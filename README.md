@@ -40,18 +40,18 @@ Diseñado bajo principios de **cero costo operativo en infraestructura serverles
 
 ```mermaid
 flowchart TD
-    subgraph Data & EDA Layer
+    subgraph "Data & EDA Layer"
         A[IoT Air Quality Sensors\nStockholm / Dublin / Global] --> C[Open-Meteo & IoT APIs]
         B[Global Meteorological Observations] --> C
         C --> EDA[src/eda.py\nADF Stationarity & Seasonal Decomp]
     end
 
-    subgraph Feature Engineering & Store
+    subgraph "Feature Engineering & Store"
         C --> D[1_feature_pipeline.py\nDaily Feature Ingestion]
         D --> E[(Hopsworks Feature Store / Local Parquet)]
     end
 
-    subgraph Multi-Algorithm Training & Model Registry
+    subgraph "Multi-Algorithm Training & Model Registry"
         E --> F[2_training_pipeline.py\nMulti-Algorithm Benchmark]
         F -->|Evaluates| M1[LightGBM MAE: 0.310]
         F -->|Evaluates| M2[XGBoost MAE: 0.321]
@@ -60,14 +60,14 @@ flowchart TD
         G --> H[(Hopsworks Model Registry / Local)]
     end
 
-    subgraph Inference, RAG & Serving
+    subgraph "Inference, RAG & Serving"
         E --> I[3_batch_inference.py\n7-Day Forecast & Drift Monitoring]
         H --> I
         I --> J[Interactive Streamlit Dashboard & Web UI]
         J --> LLM[src/llm_chain.py\nRAG & ChatML LLM Engine\nOllama / Mistral / OpenAI]
     end
 
-    subgraph Infrastructure & Deployment
+    subgraph "Infrastructure & Deployment"
         K[GitHub Actions Cron\nAutomated Daily Pipelines] -->|Triggers| D
         K -->|Triggers| I
         CONTAINER[Docker & Podman Multi-Stage Container] -->|Serves| J
