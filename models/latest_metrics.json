@@ -1,0 +1,8 @@
+{
+  "algorithm": "lightgbm",
+  "mae": 0.3096,
+  "rmse": 0.412,
+  "r2": 0.9583,
+  "n_samples_train": 460,
+  "n_samples_test": 116
+}

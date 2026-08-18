@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Air Quality AI Forecast | Serverless MLOps Platform</title>
+  <meta name="description" content="Real-time IoT Air Quality Forecasting System powered by Hopsworks, LightGBM, and GitHub Actions.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Plotly.js -->
+  <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Header Banner -->
+  <header class="app-header">
+    <div class="logo-group">
+      <div class="logo-icon"><i class="fa-solid fa-wind"></i></div>
+      <div>
+        <h1>AeroPredict AI</h1>
+        <p class="subtitle">Serverless Air Quality Forecasting & MLOps System</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="location-picker">
+        <i class="fa-solid fa-location-dot"></i>
+        <select id="locationSelect" aria-label="Select City Location">
+          <option value="Stockholm" selected>Stockholm Central (Sweden)</option>
+          <option value="Dublin">Dublin City Center (Ireland)</option>
+          <option value="Madrid">Madrid Retiro (Spain)</option>
+        </select>
+      </div>
+      <button id="refreshBtn" class="btn-refresh" title="Refresh Live Data">
+        <i class="fa-solid fa-arrows-rotate"></i> Sync Pipeline
+      </button>
+    </div>
+  </header>
+
+  <main class="dashboard-container">
+
+    <!-- KPI Summary Grid -->
+    <section class="kpi-grid">
+
+      <!-- AQI Gauge Card -->
+      <div class="glass-card aqi-card">
+        <div class="card-header">
+          <span class="card-title">Current Air Quality Index</span>
+          <span class="badge" id="aqiBadge">Good</span>
+        </div>
+        <div class="gauge-wrapper">
+          <div class="aqi-circle" id="aqiCircle">
+            <span class="aqi-number" id="aqiValue">34</span>
+            <span class="aqi-unit">US AQI</span>
+          </div>
+        </div>
+        <p class="aqi-status-text" id="aqiDescription">Air quality is satisfactory, and air pollution poses little or no risk.</p>
+      </div>
+
+      <!-- PM2.5 Concentration Card -->
+      <div class="glass-card kpi-card">
+        <div class="kpi-icon pm25-icon"><i class="fa-solid fa-smog"></i></div>
+        <div class="kpi-details">
+          <span class="kpi-label">PM2.5 Concentration</span>
+          <div class="kpi-value"><span id="pm25Value">8.4</span> <span class="unit">µg/m³</span></div>
+          <p class="kpi-subtext">Primary target variable</p>
+        </div>
+      </div>
+
+      <!-- MLOps Drift Monitor -->
+      <div class="glass-card kpi-card">
+        <div class="kpi-icon drift-icon"><i class="fa-solid fa-chart-line"></i></div>
+        <div class="kpi-details">
+          <span class="kpi-label">Monitoring Error (MAE)</span>
+          <div class="kpi-value"><span id="maeValue">1.82</span> <span class="unit">µg/m³</span></div>
+          <p class="kpi-subtext"><i class="fa-solid fa-circle-check text-success"></i> Model within tolerance</p>
+        </div>
+      </div>
+
+      <!-- Serverless Pipeline Status -->
+      <div class="glass-card kpi-card">
+        <div class="kpi-icon ops-icon"><i class="fa-solid fa-server"></i></div>
+        <div class="kpi-details">
+          <span class="kpi-label">Serverless Pipeline</span>
+          <div class="kpi-value-text"><span id="pipelineStatus">Hopsworks + GitHub Actions</span></div>
+          <p class="kpi-subtext" id="lastUpdatedTime">Last sync: 2026-08-18 11:00 UTC</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Forecast Plot Section -->
+    <section class="glass-card chart-card">
+      <div class="card-header flex-between">
+        <div>
+          <h2><i class="fa-solid fa-chart-area"></i> 72-Hour PM2.5 & AQI Forecast</h2>
+          <p class="section-subtitle">Multi-step time series prediction using LightGBM Gradient Boosted Decision Trees</p>
+        </div>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="dot forecast-dot"></span> Forecast (PM2.5)</span>
+          <span class="legend-item"><span class="dot threshold-dot"></span> WHO Target (15 µg/m³)</span>
+        </div>
+      </div>
+      <div id="forecastChart" class="chart-container"></div>
+    </section>
+
+    <!-- Feature Importance & Model Details -->
+    <section class="grid-2col">
+      <div class="glass-card">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-microchip"></i> Top Predictive Features</h3>
+        </div>
+        <div id="featureImportanceChart" class="chart-container-sm"></div>
+      </div>
+
+      <div class="glass-card">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-cubes-stacked"></i> MLOps System Architecture</h3>
+        </div>
+        <div class="arch-list">
+          <div class="arch-item">
+            <i class="fa-solid fa-database arch-icon"></i>
+            <div>
+              <strong>Hopsworks Feature Store</strong>
+              <p>Stores hourly IoT measurements, lag features (1h - 168h), and rolling statistics.</p>
+            </div>
+          </div>
+          <div class="arch-item">
+            <i class="fa-solid fa-brain arch-icon"></i>
+            <div>
+              <strong>LightGBM Time-Series Regressor</strong>
+              <p>Optimized with early stopping, historical weather interactions, and cyclical calendar features.</p>
+            </div>
+          </div>
+          <div class="arch-item">
+            <i class="fa-solid fa-clock-rotate-left arch-icon"></i>
+            <div>
+              <strong>Automated GitHub Actions</strong>
+              <p>Executes daily feature pipeline, batch inference forecasting, and weekly model retraining.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer with Bio -->
+  <footer class="app-footer">
+    <p>Designed & Developed by <strong>Guillén Concepción</strong> | Senior Data Scientist & MLOps Engineer</p>
+    <div class="social-links">
+      <a href="https://github.com/GuillenConcepcion/DS-AeroPredict-AI-Enterprise-Serverless-MLOps-RAG-LLM-Air-Quality-Forecasting-Platform" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
+      <a href="https://www.linkedin.com/in/guillen-concepcion-25266b127" target="_blank"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+      <a href="mailto:guillenconcepcion@gmail.com"><i class="fa-solid fa-envelope"></i> Contact</a>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

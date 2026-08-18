@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Air Quality AI Forecast | GitHub Pages & Hopsworks MLOps Platform</title>
+  <meta name="description" content="Serverless IoT Air Quality Forecast and Hindcast graphs powered by Hopsworks, XGBoost, and GitHub Actions.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="logo-group">
+      <img src="img%20Dara%20Scientist.png" alt="Guillén Concepción Data Scientist" class="author-avatar-img" style="height: 48px; width: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #2088FF;">
+      <div>
+        <h1>AeroPredict AI</h1>
+        <p class="subtitle">Serverless Hopsworks & GitHub Pages Air Quality System</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="location-picker">
+        <i class="fa-solid fa-location-dot"></i>
+        <select id="locationSelect" aria-label="Select City Location">
+          <option value="Stockholm" selected>Stockholm Central (Sweden)</option>
+          <option value="Dublin">Dublin City Center (Ireland)</option>
+          <option value="Madrid">Madrid Retiro (Spain)</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard-container">
+    <section class="kpi-grid">
+      <div class="glass-card aqi-card">
+        <div class="card-header">
+          <span class="card-title">Current Air Quality Index</span>
+          <span class="badge" id="aqiBadge">Good</span>
+        </div>
+        <div class="gauge-wrapper">
+          <div class="aqi-circle" id="aqiCircle">
+            <span class="aqi-number" id="aqiValue">36</span>
+            <span class="aqi-unit">US AQI</span>
+          </div>
+        </div>
+        <p class="aqi-status-text" id="aqiDescription">Air quality is satisfactory for public health.</p>
+      </div>
+
+      <div class="glass-card kpi-card">
+        <div class="kpi-icon pm25-icon"><i class="fa-solid fa-smog"></i></div>
+        <div class="kpi-details">
+          <span class="kpi-label">PM2.5 Concentration</span>
+          <div class="kpi-value"><span id="pm25Value">8.7</span> <span class="unit">µg/m³</span></div>
+          <p class="kpi-subtext">IoT Sensor Live Feed</p>
+        </div>
+      </div>
+
+      <div class="glass-card kpi-card">
+        <div class="kpi-icon drift-icon"><i class="fa-solid fa-chart-line"></i></div>
+        <div class="kpi-details">
+          <span class="kpi-label">Monitoring Error (MAE)</span>
+          <div class="kpi-value"><span id="maeValue">1.52</span> <span class="unit">µg/m³</span></div>
+          <p class="kpi-subtext"><i class="fa-solid fa-circle-check text-success"></i> Hindcast Validated</p>
+        </div>
+      </div>
+
+      <div class="glass-card kpi-card">
+        <div class="kpi-icon ops-icon"><i class="fa-solid fa-server"></i></div>
+        <div class="kpi-details">
+          <span class="kpi-label">Serverless Infrastructure</span>
+          <div class="kpi-value-text">Hopsworks + GitHub Pages</div>
+          <p class="kpi-subtext">XGBoost Regressor Model</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- LLM Personalized Advisory Panel -->
+    <section class="glass-card llm-panel">
+      <div class="card-header flex-between">
+        <h2><i class="fa-solid fa-robot"></i> LLM Personalized Health Advisory</h2>
+        <span class="badge" style="background: rgba(139, 92, 246, 0.2); color: #8b5cf6; border-color: #8b5cf6;">AI Expert Agent</span>
+      </div>
+      <div class="llm-grid">
+        <div class="llm-box">
+          <strong><i class="fa-solid fa-person-running text-cyan"></i> Outdoor Exercise Advice</strong>
+          <p id="llmActivity">Ideal conditions for outdoor workouts, running, and cycling. Air quality poses no restriction.</p>
+        </div>
+        <div class="llm-box">
+          <strong><i class="fa-solid fa-house-chimney-window text-emerald"></i> Indoor Ventilation</strong>
+          <p id="llmVentilation">Open windows freely during early morning and late evening to circulate fresh air.</p>
+        </div>
+        <div class="llm-box">
+          <strong><i class="fa-solid fa-heart-pulse text-amber"></i> Sensitive Groups (Asthma/Elderly)</strong>
+          <p id="llmSensitive">No special health precautions required for sensitive groups under current atmospheric conditions.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Forecast & Hindcast Chart -->
+    <section class="glass-card chart-card">
+      <div class="card-header flex-between">
+        <div>
+          <h2><i class="fa-solid fa-chart-area"></i> 72-Hour AQI Forecast & Hindcast Graph</h2>
+          <p class="section-subtitle">Comparing 48-hour historical observed ground-truth with 72-hour future XGBoost predictions</p>
+        </div>
+      </div>
+      <div id="forecastChart" class="chart-container"></div>
+    </section>
+
+    <!-- Jupyter Notebooks Pipeline Directory -->
+    <section class="glass-card">
+      <div class="card-header">
+        <h2><i class="fa-solid fa-book-bookmark"></i> Jupyter Notebooks Workflow Pipeline</h2>
+      </div>
+      <div class="arch-list">
+        <div class="arch-item">
+          <i class="fa-solid fa-database arch-icon"></i>
+          <div>
+            <strong>Notebook 1: Backfill Feature Group</strong> (`notebooks/1_backfill_feature_group.ipynb`)
+            <p>Fetches historical IoT air quality measurements & backfills Hopsworks Feature Group `air_quality_hourly_fg`.</p>
+          </div>
+        </div>
+        <div class="arch-item">
+          <i class="fa-solid fa-clock arch-icon"></i>
+          <div>
+            <strong>Notebook 2: Daily Feature Pipeline</strong> (`notebooks/2_daily_feature_pipeline.ipynb`)
+            <p>Daily GitHub Actions cron retrieving fresh hourly measurements and updating Feature Store.</p>
+          </div>
+        </div>
+        <div class="arch-item">
+          <i class="fa-solid fa-brain arch-icon"></i>
+          <div>
+            <strong>Notebook 3: XGBoost Training Pipeline</strong> (`notebooks/3_training_pipeline.ipynb`)
+            <p>Trains XGBoost Regressor model on time-series feature view and logs artifact to Hopsworks Model Registry.</p>
+          </div>
+        </div>
+        <div class="arch-item">
+          <i class="fa-solid fa-chart-simple arch-icon"></i>
+          <div>
+            <strong>Notebook 4: Batch Inference & Hindcast Graphs</strong> (`notebooks/4_batch_inference_pipeline.ipynb`)
+            <p>Downloads registered model from Hopsworks, predicts 72h future AQI, generates hindcast evaluation graph, and updates GitHub Pages site.</p>
+          </div>
+        </div>
+        <div class="arch-item">
+          <i class="fa-solid fa-comments arch-icon"></i>
+          <div>
+            <strong>Notebook 5: LLM Personalized Advisory</strong> (`notebooks/5_llm_personalized_recommendations.ipynb`)
+            <p>LLM chain generating personalized health advice for athletes, children with asthma, and senior citizens.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-profile" style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 10px;">
+      <img src="img%20Dara%20Scientist.png" alt="Guillén Concepción" style="height: 40px; width: 40px; border-radius: 50%; border: 1.5px solid #2088FF;">
+      <p style="margin: 0;">Designed & Developed by <strong>Guillén Concepción</strong> | Senior Data Scientist & MLOps Engineer</p>
+    </div>
+    <div class="social-links">
+      <a href="https://github.com/GuillenConcepcion/DS-AeroPredict-AI-Enterprise-Serverless-MLOps-RAG-LLM-Air-Quality-Forecasting-Platform" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
+      <a href="https://www.linkedin.com/in/guillen-concepcion-25266b127" target="_blank"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+      <a href="mailto:guillenconcepcion@gmail.com"><i class="fa-solid fa-envelope"></i> Contact</a>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

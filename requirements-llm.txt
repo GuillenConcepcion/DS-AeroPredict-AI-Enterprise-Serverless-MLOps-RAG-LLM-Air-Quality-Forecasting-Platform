@@ -1,0 +1,16 @@
+# LLM & 4-bit Quantization Requirements for Llama 3 8B / Transformers / Ollama
+transformers>=4.40.0
+bitsandbytes>=0.43.0
+accelerate>=0.28.0
+torch>=2.2.0
+peft>=0.10.0
+datasets>=2.18.0
+trl>=0.8.0
+huggingface_hub>=0.22.0
+openai>=1.14.0
+requests>=2.31.0
+pydantic>=2.6.0
+streamlit>=1.32.0
+plotly>=5.19.0
+pandas>=2.2.0
+numpy>=1.26.0

@@ -1,0 +1,26 @@
+# Secret Keys & Environment Files (Hidden from Third Parties & Git)
+.env
+.env.local
+.secrets/
+*.key
+*.pem
+*.secret
+
+# Python & Environment
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.pytest_cache/
+
+# Data & Models
+data/*.parquet
+models/air_quality_model/*.joblib
+models/air_quality_model/*.json
+
+# Logs & OS Files
+*.log
+.DS_Store
+Thumbs.db
