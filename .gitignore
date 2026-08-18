@@ -2,6 +2,7 @@
 .env
 .env.local
 .secrets/
+.streamlit/secrets.toml
 *.key
 *.pem
 *.secret
